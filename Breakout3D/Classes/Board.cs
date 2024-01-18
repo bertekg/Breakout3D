@@ -5,34 +5,40 @@ namespace Breakout3D.Classes;
 
 class Board : DrawableGameComponent
 {
-    GraphicsDevice graphics;
-
-    private Camera camera;
-    private GameObject wallLeft, wallRight;
-    private SpriteBatch spriteBatch;
+    private readonly GraphicsDevice graphics;
+    private readonly Camera camera;
+    private readonly GameObject wallLeft;
+    private readonly GameObject wallRight;
     private Vector3 scale;
-    private int boardHeight;
-    private int boardSize;
+
+    public SpriteBatch SpriteBatch;
+    public int BoardHeight;
+    public int BoardSize;
+
+    public GraphicsDevice Graphics => graphics;
 
     public Board(Model wall, Camera camera, Game game, GraphicsDevice graphics,
         SpriteBatch spriteBatch, int boardSize) : base(game)
     {
-        this.spriteBatch = spriteBatch;
+        SpriteBatch = spriteBatch;
+        BoardSize = boardSize;
+        BoardHeight = 2 * boardSize;
         this.graphics = graphics;
-        this.boardSize = boardSize;
-        boardHeight = 2 * boardSize;
         this.camera = camera;
         float z = 94.54f;
         scale = new Vector3(0.007f, boardSize / z, 0.05f);
-        wallLeft = new GameObject();
-        wallRight = new GameObject();
-
-        wallLeft.Model = wall;
-        wallRight.Model = wall;
-        wallLeft.Scale = scale;
-        wallRight.Scale = scale;
-        wallLeft.Position = new Vector3(-2, boardSize, 0.0f);
-        wallRight.Position = new Vector3(boardSize + 2, boardSize, 0.0f);
+        wallLeft = new GameObject
+        {
+            Model = wall,
+            Scale = scale,
+            Position = new Vector3(-2, boardSize, 0.0f)
+        };
+        wallRight = new GameObject
+        {
+            Model = wall,
+            Scale = scale,
+            Position = new Vector3(boardSize + 2, boardSize, 0.0f)
+        };
     }
 
     public override void Update(GameTime gameTime)

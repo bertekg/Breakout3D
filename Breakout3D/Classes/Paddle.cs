@@ -6,46 +6,51 @@ namespace Breakout3D.Classes;
 
 class Paddle : DrawableGameComponent
 {
+    private readonly int boardSize;
+    private readonly int size;
+    private readonly int speed = 1;
+    private readonly GameObject paddleObject;
+    private readonly Camera camera;
+    private BoundingSphere boundingSphere;
+
+    public GraphicsDevice Graphics;
+    public SpriteBatch SpriteBatch;
     public double PosX;
     public double PosY;
 
-    private int boardSize;
-    private int size;
-    private int speed = 1;
-    private GameObject paddleObject;
-    private Camera camera;
-    private SpriteBatch spriteBatch;
-    private BoundingSphere boundingSphere;
-    GraphicsDevice graphics;
-
-    public Paddle(Model model, Camera camera, Game game,
-    GraphicsDevice graphics, SpriteBatch spriteBatch,
-    int size, int boardSize) : base(game)
+    public Paddle(Model model, Camera camera, Game game, GraphicsDevice graphics,
+        SpriteBatch spriteBatch, int size, int boardSize) : base(game)
     {
-        this.spriteBatch = spriteBatch;
-        this.graphics = graphics;
+        Graphics = graphics;
+        SpriteBatch = spriteBatch;
         this.camera = camera;
         this.size = size;
         this.boardSize = boardSize;
-        paddleObject = new GameObject();
-        paddleObject.Model = model;
-        paddleObject.Scale = new Vector3(0.03f, 0.01f, 0.01f);
+
+        paddleObject = new GameObject
+        {
+            Model = model,
+            Scale = new Vector3(0.03f, 0.01f, 0.01f)
+        };
         boundingSphere = paddleObject.Model.Meshes[0].BoundingSphere;
         boundingSphere.Center = paddleObject.Position;
         boundingSphere.Radius = size / 2;
         ResetPaddlePosition();
     }
+
     public void ResetPaddlePosition()
     {
         PosX = (double)boardSize / 2;
         PosY = 2.0f;
     }
+
     public override void Update(GameTime gameTime)
     {
         paddleObject.Position = new Vector3((float)PosX, (float)PosY, 0.0f);
         boundingSphere.Center = paddleObject.Position;
         base.Update(gameTime);
     }
+
     public override void Draw(GameTime gameTime)
     {
         paddleObject.Position = new Vector3((float)PosX, (float)PosY, 0.0f);
@@ -53,6 +58,7 @@ class Paddle : DrawableGameComponent
         paddleObject.DrawModel(camera, new Vector3(1f, 1f, 1f));
         base.Draw(gameTime);
     }
+
     public void MoveLeft()
     {
         PosX -= speed;
@@ -61,6 +67,7 @@ class Paddle : DrawableGameComponent
             PosX = (size / 2);
         }
     }
+
     public void MoveRight()
     {
         PosX += speed;
@@ -69,6 +76,7 @@ class Paddle : DrawableGameComponent
             PosX = boardSize - (size / 2);
         }
     }
+
     public void CheckPaddleBallColisionAndUpdateDir(Ball ball)
     {
         if (boundingSphere.Intersects(ball.BallSphere) && ball.DirY < 0)

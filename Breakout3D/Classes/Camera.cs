@@ -6,7 +6,10 @@ namespace Breakout3D.Classes;
 
 public class Camera
 {
+    const int MAX_TRANSITION_TIME = 400;
+
     private Vector3 camTarget;
+    private int transitionTime = MAX_TRANSITION_TIME;
 
     protected GraphicsDevice GraphicsDevice { get; set; }
 
@@ -14,23 +17,23 @@ public class Camera
     public Matrix ProjectionMatrix { get; set; }
     public Matrix WorldMatrix;
     public Vector3 CamPosition;
-
     public Vector3 prevCamTarget, prevCamPosition;
     public Vector3 newCamTarget, newCamPosition;
-    const int MAX_TRANSITION_TIME = 400;
-    int transitionTime = MAX_TRANSITION_TIME;
 
     public Camera(GraphicsDevice graphicsDevice)
     {
         GraphicsDevice = graphicsDevice;
         camTarget = new Vector3(25f, 50f, -50f);
         CamPosition = new Vector3(25f, 50f, 150f);
+
         ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(
             MathHelper.ToRadians(45f),
             GraphicsDevice.Viewport.AspectRatio,
             1f, 1000f);
+
         ViewMatrix = Matrix.CreateLookAt(CamPosition, camTarget,
-            new Vector3(0f, 1f, 0f)); // Yup 
+            new Vector3(0f, 1f, 0f));
+
         WorldMatrix = Matrix.CreateWorld(camTarget, Vector3.Forward, Vector3.Up);
         prevCamTarget = camTarget;
         prevCamPosition = CamPosition;
@@ -72,14 +75,16 @@ public class Camera
         }
         ViewMatrix = Matrix.CreateLookAt(CamPosition, camTarget, Vector3.Up);
     }
-    Vector3 Lerp(Vector3 firstVector, Vector3 secondVector, float by)
+
+    static Vector3 Lerp(Vector3 firstVector, Vector3 secondVector, float by)
     {
         float retX = Lerp(firstVector.X, secondVector.X, by);
         float retY = Lerp(firstVector.Y, secondVector.Y, by);
         float retZ = Lerp(firstVector.Z, secondVector.Z, by);
         return new Vector3(retX, retY, retZ);
     }
-    float Lerp(float firstFloat, float secondFloat, float by)
+
+    static float Lerp(float firstFloat, float secondFloat, float by)
     {
         return firstFloat * (1 - by) + secondFloat * by;
     }

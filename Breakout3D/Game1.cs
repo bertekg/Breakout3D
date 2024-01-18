@@ -8,24 +8,25 @@ namespace Breakout3D
 {
     public class Game1 : Game
     {
-        private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+        private readonly GraphicsDeviceManager graphics;
+        
+        private readonly int boardSize = 52;
+        private readonly int windowHeight = 800;
+        private readonly int windowWidth = 600;
+        private readonly int paddleSize = 4;
+        private readonly int ballSize = 10;
 
+        private List<Brick> listBricks;
+        private SpriteBatch spriteBatch;
         private Camera camera;
         private Model model;
         private Board board;
-        private int boardSize = 52;
-        private int windowHeight = 800;
-        private int windowWidth = 600;
-        private List<Brick> listBricks;
 
-        int paddleSize = 4;
-        Paddle paddle;
+        private Paddle paddle;
 
-        private int ballSize = 10;
-        Ball ball;
+        private Ball ball;
 
-        SpriteFont font, title;
+        private SpriteFont font, title;
 
         private bool start = false;
         private bool pause = false;
@@ -34,16 +35,16 @@ namespace Breakout3D
 
         public Game1()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferHeight = windowHeight;
-            _graphics.PreferredBackBufferWidth = windowWidth;
-            _graphics.ApplyChanges();
+            graphics.PreferredBackBufferHeight = windowHeight;
+            graphics.PreferredBackBufferWidth = windowWidth;
+            graphics.ApplyChanges();
 
             camera = new Camera(GraphicsDevice);
 
@@ -52,48 +53,51 @@ namespace Breakout3D
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
             model = Content.Load<Model>("model");
             ((BasicEffect)model.Meshes[0].Effects[0]).EnableDefaultLighting();
             board = new Board(model, camera, this, GraphicsDevice,
-                _spriteBatch, boardSize);
+                spriteBatch, boardSize);
             Components.Add(board);
 
             paddle = new Paddle(model, camera, this, GraphicsDevice,
-                _spriteBatch, paddleSize, boardSize);
+                spriteBatch, paddleSize, boardSize);
             Components.Add(paddle);
 
             listBricks = new List<Brick>();
             CreateBricks();
 
-            ball = new Ball(model, camera, this, GraphicsDevice, _spriteBatch,
+            ball = new Ball(model, camera, this, GraphicsDevice, spriteBatch,
                 ballSize, boardSize);
             Components.Add(ball);
 
             font = Content.Load<SpriteFont>("text");
             title = Content.Load<SpriteFont>("title");
         }
+
         public void CreateBricks()
         {
             int boardHeigth = boardSize * 2;
             int brickWidth = 4;
             int brickRows = 6;
-            int brickColumns = boardSize / brickWidth;
-            Vector3[] colors = new Vector3[4] {
-            new Vector3(1f,0f,0f), //Czerwony
-            new Vector3(1f,0.5f,0f), //Pomarańczowy
-            new Vector3(0f,1f,0f), //Zielony
-            new Vector3(0f,0f,1f)//Niebieski
-        };
-            //Kolumny 
+
+            Vector3[] colors = new Vector3[4] 
+            {
+                new(1f,0f,0f), //Red
+                new(1f,0.5f,0f), //Orange
+                new(0f,1f,0f), //Green
+                new(0f,0f,1f) //Blue
+            };
+
+            //Columns 
             for (int i = 2; i <= boardSize; i += brickWidth)
             {
-                //Wiersze 
+                //Rows 
                 for (int j = 1; j <= brickRows; j++)
                 {
                     listBricks.Add(new Brick(model, camera, this, GraphicsDevice,
-                         _spriteBatch, i, boardHeigth - (j * 3), brickWidth, colors[(j - 1) % 4]));
+                        spriteBatch, i, boardHeigth - (j * 3), brickWidth, colors[(j - 1) % 4]));
                 }
             }
             foreach (var brick in listBricks)
@@ -108,7 +112,7 @@ namespace Breakout3D
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
-            //ruch paletki 
+            //paddle movement
             if (keyboardState.IsKeyDown(Keys.A) ||
                 keyboardState.IsKeyDown(Keys.Left))
             {
@@ -166,47 +170,47 @@ namespace Breakout3D
 
             if (!start)
             {
-                _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "PRESS SPACE TO START",
+                spriteBatch.Begin();
+                spriteBatch.DrawString(font, "PRESS SPACE TO START",
                 new Vector2(215, 460), Color.White);
-                _spriteBatch.DrawString(title, "BREAKOUT 3D",
+                spriteBatch.DrawString(title, "BREAKOUT 3D",
                 new Vector2(240, 260), Color.Orange);
-                _spriteBatch.End();
+                spriteBatch.End();
             }
             if (pause && start)
             {
-                _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "PRESS SPACE TO RESUME",
+                spriteBatch.Begin();
+                spriteBatch.DrawString(font, "PRESS SPACE TO RESUME",
                 new Vector2(205, 460), Color.White);
-                _spriteBatch.End();
+                spriteBatch.End();
             }
             if (gameover)
             {
-                _spriteBatch.Begin();
-                _spriteBatch.DrawString(title, "GAME OVER",
+                spriteBatch.Begin();
+                spriteBatch.DrawString(title, "GAME OVER",
                 new Vector2(250, 260), Color.Orange);
-                _spriteBatch.DrawString(font, "PRESS SPACE TO RESTART",
+                spriteBatch.DrawString(font, "PRESS SPACE TO RESTART",
                 new Vector2(205, 460), Color.White);
-                _spriteBatch.End();
+                spriteBatch.End();
             }
             if (score == listBricks.Count)
             {
-                _spriteBatch.Begin();
-                _spriteBatch.DrawString(title, "CONGRATULATIONS! YOU WIN!",
+                spriteBatch.Begin();
+                spriteBatch.DrawString(title, "CONGRATULATIONS! YOU WIN!",
                 new Vector2(160, 260), Color.Orange);
-                _spriteBatch.DrawString(font, "PRESS SPACE TO RESTART",
+                spriteBatch.DrawString(font, "PRESS SPACE TO RESTART",
                 new Vector2(205, 460), Color.White);
-                _spriteBatch.End();
+                spriteBatch.End();
                 ball.Run = false;
                 ball.ResetBallPosition();
                 ball.ResetBallDireciton();
             }
-            _spriteBatch.Begin();
-            _spriteBatch.DrawString(font, "Score: " + score,
+            spriteBatch.Begin();
+            spriteBatch.DrawString(font, "Score: " + score,
             new Vector2(10, 10), Color.White);
-            _spriteBatch.DrawString(font, "Lives: " + ball.Lives,
+            spriteBatch.DrawString(font, "Lives: " + ball.Lives,
             new Vector2(windowWidth - 80, 10), Color.White);
-            _spriteBatch.End();
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
