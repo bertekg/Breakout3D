@@ -188,7 +188,7 @@ namespace Breakout3D
             {
                 spriteBatch.Begin();
                 spriteBatch.DrawString(title, "GAME OVER",
-                new Vector2(250, 260), Color.Orange);
+                new Vector2(230, 260), Color.Orange);
                 spriteBatch.DrawString(font, "PRESS SPACE TO RESTART",
                 new Vector2(205, 460), Color.White);
                 spriteBatch.End();
@@ -196,8 +196,8 @@ namespace Breakout3D
             if (score == listBricks.Count)
             {
                 spriteBatch.Begin();
-                spriteBatch.DrawString(title, "CONGRATULATIONS! YOU WIN!",
-                new Vector2(160, 260), Color.Orange);
+                spriteBatch.DrawString(title, "CONGRATULATIONS!\n       YOU WIN!",
+                new Vector2(180, 260), Color.Orange);
                 spriteBatch.DrawString(font, "PRESS SPACE TO RESTART",
                 new Vector2(205, 460), Color.White);
                 spriteBatch.End();
